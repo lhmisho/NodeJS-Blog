@@ -3,6 +3,9 @@ const morgan = require('morgan')
 
 const app = express()
 
+const authRoutes = require('./routes/authRoutes')
+const mongoose = require('mongoose');
+
 // setup view engine 
 app.set('view engine', 'ejs')
 app.set('views', 'views')
@@ -16,15 +19,20 @@ const middleware = [
 ]
 app.use(middleware)
 
+app.use('/auth', authRoutes)
 app.get('/', (req, res) => {
-    res.render('pages/auth/signup.ejs', {title: 'Create a new account'})
-    // res.json({
-    //     massage: 'Welcome to new blog'
-    // })
+    // res.render('pages/auth/signup.ejs', {title: 'Create a new account'})
+    res.json({
+        massage: 'Welcome to new blog'
+    })
 })
 
 const PORT = process.env.PORT || 8090
-
-app.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`)
-})
+mongoose.connect('mongodb://localhost:27017/blog', {useNewUrlParser: true, useUnifiedTopology: true})
+    .then(() => {
+        console.log("DB connected")
+        app.listen(PORT, () => {
+            console.log(`Server running on ${PORT}`)
+        })        
+    })
+    .catch(e => console.log(e))
