@@ -17,9 +17,10 @@ const middleware = [
 app.use(middleware)
 
 app.get('/', (req, res) => {
-    res.json({
-        massage: 'Welcome to new blog'
-    })
+    res.render('pages/auth/signup.ejs', {title: 'Create a new account'})
+    // res.json({
+    //     massage: 'Welcome to new blog'
+    // })
 })
 
 const PORT = process.env.PORT || 8090
