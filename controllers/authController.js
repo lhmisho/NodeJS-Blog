@@ -30,7 +30,7 @@ exports.loginGetController = (req, res, next) => {
     res.render('pages/auth/login.ejs', { title: 'Signin to your account' })
 }
 
-exports.loginPostController = async(req, res, next) => {
+exports.loginPostController = async (req, res, next) => {
     console.log(req.body)
     let { email, password } = req.body
 
@@ -45,7 +45,7 @@ exports.loginPostController = async(req, res, next) => {
         }
         console.log(user)
         res.render('pages/auth/login.ejs', { title: 'Signin to your account' })
-    }catch(e){
+    } catch (e) {
         console.log(e)
         next(e)
     }
