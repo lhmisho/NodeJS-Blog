@@ -4,13 +4,14 @@ const { validationResult } = require('express-validator')
 const errorFormatter = require('../utilitiy/validationErrorFormatter')
 
 exports.signupGetController = (req, res, next) => {
-    res.render('pages/auth/signup.ejs', { title: 'Create a new account' })
+    res.render('pages/auth/signup.ejs', { title: 'Create a new account', error: {} })
 }
 
 exports.signupPostController = async (req, res, next) => {
     let errors = validationResult(req).formatWith(errorFormatter)
     if (errors) {
-        return console.log(errors.mapped())
+        console.log(errors.mapped())
+        return res.render('pages/auth/signup.ejs', { title: 'Create a new account', error: errors.mapped() })
     }
     try {
         let { username, password, email } = req.body
