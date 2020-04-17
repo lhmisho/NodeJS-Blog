@@ -18,7 +18,12 @@ router.post('/validator', [
         .withMessage('Please provide a valid email')
 ], (req, res, next) => {
     let errors = validationResult(req)
-    console.log(errors)
+    console.log(errors.isEmpty())
+    console.log(errors.mapped())
+    console.log(errors.array())
+
+    const formatter = error => error.msg 
+    console.log(errors.formatWith(formatter).mapped())
     res.render('playground/signup', { title: 'Validator playground' })
 })
 
