@@ -12,10 +12,12 @@ router.post('/validator', [
         .isEmpty()
         .withMessage("Username must not be empty")
         .isLength({ max: 15 })
-        .withMessage(`User name cannot be greater than 15 character`),
+        .withMessage(`User name cannot be greater than 15 character`)
+        .trim(),
     check('email')
         .isEmail()
-        .withMessage('Please provide a valid email'),
+        .withMessage('Please provide a valid email')
+        .normalizeEmail(),
     check('password')
         .custom(value => {
             if(value.length < 5 ){
