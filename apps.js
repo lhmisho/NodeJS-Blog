@@ -4,6 +4,8 @@ const morgan = require('morgan')
 const app = express()
 
 const authRoutes = require('./routes/authRoutes')
+const validatorRoutes = require('./playground/validator') // should be remove letter
+
 const mongoose = require('mongoose');
 
 // setup view engine 
@@ -20,6 +22,8 @@ const middleware = [
 app.use(middleware)
 
 app.use('/auth', authRoutes)
+app.use('/playground', validatorRoutes) // should be remove letter
+
 app.get('/', (req, res) => {
     // res.render('pages/auth/signup.ejs', {title: 'Create a new account'})
     res.json({
