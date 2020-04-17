@@ -15,7 +15,23 @@ router.post('/validator', [
         .withMessage(`User name cannot be greater than 15 character`),
     check('email')
         .isEmail()
-        .withMessage('Please provide a valid email')
+        .withMessage('Please provide a valid email'),
+    check('password')
+        .custom(value => {
+            if(value.length < 5 ){
+                throw new Error('Password must be greater than 5 character')
+            }
+            return true
+        }),
+    check('confirmPassword')
+        .custom((value, { req }) => {
+            if(value !== req.body.password){
+                throw new Error('Password doesnot matched')
+            }
+            return true
+        })
+    
+    
 ], (req, res, next) => {
     let errors = validationResult(req)
     console.log(errors.isEmpty())
