@@ -13,8 +13,10 @@ const signupValidator = [
     body('username')
         .isLength({ min: 2, max: 10 }).withMessage('Username must be between 2 and 5 charater')
         .trim()
-        .custom(value => {
-            let user = User.findOne({ username })
+        .custom(async value => {
+            console.log(value)
+            let user = await User.findOne({ username: value })
+            console.log()
             if (user) {
                 return Promise.reject('Username already exists')
             }
@@ -22,8 +24,8 @@ const signupValidator = [
     body('email')
         .isEmail().withMessage('Please provide a valid email')
         .normalizeEmail()
-        .custom(value => {
-            let userEmail = User.findOne({ value })
+        .custom(async value => {
+            let userEmail = await User.findOne({ email: value })
             if (userEmail) {
                 return Promise.reject('Email already in use')
             }
@@ -40,7 +42,7 @@ const signupValidator = [
 
 ]
 router.get('/signup', signupGetController)
-router.post('/signup', signupPostController)
+router.post('/signup', signupValidator, signupPostController)
 
 router.get('/login', loginGetController)
 router.post('/login', loginPostController)
