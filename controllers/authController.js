@@ -37,24 +37,38 @@ exports.signupPostController = async (req, res, next) => {
 }
 
 exports.loginGetController = (req, res, next) => {
-    res.render('pages/auth/login.ejs', { title: 'Signin to your account' })
+    res.render('pages/auth/login.ejs', { title: 'Signin to your account', error: {}, value: {} })
 }
 
 exports.loginPostController = async (req, res, next) => {
     console.log(req.body)
     let { email, password } = req.body
-
+    let errors = validationResult(req).formatWith(errorFormatter)
+    console.log(errors.mapped)
+    if (errors) {
+        res.render('pages/auth/login.ejs', {
+            title: 'Signin to your account', error: errors.mapped(),
+            value: {}
+        })
+    }
     try {
         let user = await User.findOne({ email })
         if (!user) {
-            res.json({ message: 'Invalid Credentials' })
+            return res.render('pages/auth/login.ejs', {
+                title: 'Signin to your account', error: { message: 'Invalid Credentials' },
+                value: { email }
+            })
         }
         let match = await bcrypt.compare(password, user.password)
-        if (!match) {
-            res.json({ message: 'Invalid Credentials' })
+        if (match === false) {
+            console.log(match)
+            return res.render('pages/auth/login.ejs', {
+                title: 'Signin to your account', error: { message: 'Invalid Credentials' },
+                value: { email }
+            })
         }
         console.log(user)
-        res.render('pages/auth/login.ejs', { title: 'Signin to your account' })
+        res.render('pages/auth/login.ejs', { title: 'Signin to your account', error: {}, value: {} })
     } catch (e) {
         console.log(e)
         next(e)
