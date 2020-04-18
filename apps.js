@@ -1,7 +1,17 @@
 const express = require('express')
 const morgan = require('morgan')
 const session = require('express-session')
+const MongoDBStore = require('connect-mongodb-session')(session);
+
 const app = express()
+const DB_URI = 'mongodb://localhost:27017/blog';
+var store = new MongoDBStore({
+    uri: DB_URI,
+    collection: 'sessions',
+    expires: 1000 * 60 * 60 * 24 * 7 // one week
+  });
+
+
 
 const authRoutes = require('./routes/authRoutes')
 
@@ -22,8 +32,9 @@ const middleware = [
         resave: false,
         saveUninitialized: false,
         cookie: {
-            maxAge: 60*60 * 2
-        }
+            maxAge: 1000 * 60 * 60 * 24 * 7 // one week
+        },
+        store: store
     })
 ]
 app.use(middleware)
@@ -38,7 +49,7 @@ app.get('/', (req, res) => {
 })
 
 const PORT = process.env.PORT || 8090
-mongoose.connect('mongodb://localhost:27017/blog', {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(DB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(() => {
         console.log("DB connected")
         app.listen(PORT, () => {
