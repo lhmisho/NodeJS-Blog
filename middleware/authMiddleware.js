@@ -15,13 +15,13 @@ const User = require('../models/User')
 //     }
 // }
 
-exports.bindUserWithRequest = async () => {
-    return (req, res, next) => {
+exports.bindUserWithRequest = () => {
+    return async (req, res, next) => {
         if (!req.session.isLoggedIn) {
             return next()
         }
         try {
-            let user = await User.findOne({ _id: req.session.user._id })
+            let user = await User.findOne(req.session.user._id)
             req.user = user
             next()
         } catch (e) {
