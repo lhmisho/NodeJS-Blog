@@ -37,16 +37,19 @@ exports.signupPostController = async (req, res, next) => {
 }
 
 exports.loginGetController = (req, res, next) => {
+    console.log(req.session.isLoggedIn, req.session.user)
     res.render('pages/auth/login.ejs', { title: 'Signin to your account', error: {}, value: {} })
 }
 
 exports.loginPostController = async (req, res, next) => {
     console.log(req.body)
+    res.setHeader("Content-Type", "text/html");
     let { email, password } = req.body
+
     let errors = validationResult(req).formatWith(errorFormatter)
-    console.log(errors.mapped)
-    if (errors) {
-        res.render('pages/auth/login.ejs', {
+    console.log(errors.mapped())
+    if (!errors.isEmpty()) {
+        return res.render('pages/auth/login.ejs', {
             title: 'Signin to your account', error: errors.mapped(),
             value: {}
         })
@@ -54,20 +57,16 @@ exports.loginPostController = async (req, res, next) => {
     try {
         let user = await User.findOne({ email })
         if (!user) {
-            return res.render('pages/auth/login.ejs', {
-                title: 'Signin to your account', error: { message: 'Invalid Credentials' },
-                value: { email }
-            })
+            return res.json({ message: 'Unable to login with provided credentials!' })
         }
         let match = await bcrypt.compare(password, user.password)
-        if (match === false) {
-            console.log(match)
-            return res.render('pages/auth/login.ejs', {
-                title: 'Signin to your account', error: { message: 'Invalid Credentials' },
-                value: { email }
-            })
+        if (!match) {
+            return res.json({ message: 'Unable to login with provided credentials!' })
         }
+
         console.log(user)
+        req.session.isLoggedIn = true
+        req.session.user = user
         res.render('pages/auth/login.ejs', { title: 'Signin to your account', error: {}, value: {} })
     } catch (e) {
         console.log(e)
