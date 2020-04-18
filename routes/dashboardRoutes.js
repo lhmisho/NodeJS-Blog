@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const { dashboardGetController } = require('../controllers/dashboardController')
-
-router.get('/', dashboardGetController)
+const { isAuthenticated } = require('../middleware/authMiddleware')
+router.get('/', isAuthenticated, dashboardGetController)
 
 module.exports = router
