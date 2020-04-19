@@ -2,8 +2,11 @@ const express = require('express')
 const morgan = require('morgan')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session);
+const flash = require('connect-flash')
+
 const { bindUserWithRequest } = require('./middleware/authMiddleware')
 const setLocalMiddleWare = require('./middleware/setLocals')
+
 
 const app = express()
 const DB_URI = 'mongodb://localhost:27017/blog';
@@ -14,7 +17,7 @@ var store = new MongoDBStore({
   });
 
 
-
+const playgroundRouts = require('./playground/validator')
 const authRoutes = require('./routes/authRoutes')
 const dashboardRoutes = require('./routes/dashboardRoutes')
 
@@ -41,13 +44,14 @@ const middleware = [
     }),
     bindUserWithRequest(),
     setLocalMiddleWare(),
+    flash()
 ]
 
 app.use(middleware)
 
 app.use('/auth', authRoutes)
 app.use('/dashboard', dashboardRoutes)
-
+app.use('/playground', playgroundRouts)
 app.get('/', (req, res) => {
     // res.render('pages/auth/signup.ejs', {title: 'Create a new account'})
     res.json({
