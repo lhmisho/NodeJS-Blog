@@ -1,0 +1,18 @@
+<div class="my-2">
+    <% if (flashMassage.success) { %>
+        <div class="alert alert-success alert-dismissible fade show my-3">
+            <%= flashMassage.success %>
+            <button class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button> 
+        </div>
+    <% } %>  
+    <% if (flashMassage.fail) { %>
+        <div class="alert alert-danger alert-dismissible fade show my-3">
+            <%= flashMassage.fail %>
+            <button class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button> 
+        </div>
+    <% } %>  
+</div>

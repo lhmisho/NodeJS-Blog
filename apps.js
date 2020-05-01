@@ -17,7 +17,7 @@ var store = new MongoDBStore({
   });
 
 
-const playgroundRouts = require('./playground/validator')
+// const playgroundRouts = require('./playground/validator')
 const authRoutes = require('./routes/authRoutes')
 const dashboardRoutes = require('./routes/dashboardRoutes')
 
@@ -51,7 +51,7 @@ app.use(middleware)
 
 app.use('/auth', authRoutes)
 app.use('/dashboard', dashboardRoutes)
-app.use('/playground', playgroundRouts)
+// app.use('/playground', playgroundRouts)
 app.get('/', (req, res) => {
     // res.render('pages/auth/signup.ejs', {title: 'Create a new account'})
     res.json({

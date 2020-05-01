@@ -2,9 +2,17 @@ let User = require('../models/User')
 const bcrypt = require('bcrypt')
 const { validationResult } = require('express-validator')
 const errorFormatter = require('../utilitiy/validationErrorFormatter')
+const Flash = require('../utilitiy/Flash')
 
 exports.signupGetController = (req, res, next) => {
-    res.render('pages/auth/signup.ejs', { title: 'Create a new account', error: {}, value: {} })
+    res.render('pages/auth/signup.ejs',
+        {
+            title: 'Create a new account',
+            error: {},
+            value: {},
+            flashMassage: Flash.getMessage(req)
+        }
+    )
 }
 
 exports.signupPostController = async (req, res, next) => {
@@ -12,12 +20,15 @@ exports.signupPostController = async (req, res, next) => {
     let errors = validationResult(req).formatWith(errorFormatter)
     if (errors) {
         console.log(errors.mapped())
-        return res.render('pages/auth/signup.ejs', {
-            title: 'Create a new account', error: errors.mapped(),
-            value: {
-                username, password, email
+        return res.render('pages/auth/signup.ejs',
+            {
+                title: 'Create a new account', error: errors.mapped(),
+                value: {
+                    username, password, email
+                },
+                flashMassage: Flash.getMessage(req)
             }
-        })
+        )
     }
     try {
         let hashedPassword = await bcrypt.hash(password, 11)
@@ -27,9 +38,9 @@ exports.signupPostController = async (req, res, next) => {
             password: hashedPassword
         })
 
-        let createdUser = await user.save()
-        console.log("User successfully created, ", createdUser)
-        res.render('pages/auth/signup.ejs', { title: 'Create a new account', error: {}, value: {} })
+        await user.save()
+        req.flash('success', 'User created successfully!')
+        redirect('/auth/login')
     } catch (e) {
         console.log(e)
         next(e)
@@ -38,7 +49,14 @@ exports.signupPostController = async (req, res, next) => {
 
 exports.loginGetController = (req, res, next) => {
     console.log(req.session.isLoggedIn, req.session.user)
-    res.render('pages/auth/login.ejs', { title: 'Signin to your account', error: {}, value: {} })
+    res.render('pages/auth/login.ejs',
+        {
+            title: 'Signin to your account',
+            error: {},
+            value: {},
+            flashMassage: Flash.getMessage(req)
+        }
+    )
 }
 
 exports.loginPostController = async (req, res, next) => {
@@ -48,20 +66,41 @@ exports.loginPostController = async (req, res, next) => {
 
     let errors = validationResult(req).formatWith(errorFormatter)
     console.log(errors.mapped())
+    
     if (!errors.isEmpty()) {
-        return res.render('pages/auth/login.ejs', {
-            title: 'Signin to your account', error: errors.mapped(),
-            value: {}
-        })
+        req.flash('fail', 'Please check your form')
+        return res.render('pages/auth/login.ejs',
+            {
+                title: 'Signin to your account', error: errors.mapped(),
+                value: {},
+                flashMassage: Flash.getMessage(req)
+            }
+        )
     }
     try {
         let user = await User.findOne({ email })
         if (!user) {
-            return res.json({ message: 'Unable to login with provided credentials!' })
+            req.flash('fail', 'Please provide valid credentials')
+            return res.render('pages/auth/login.ejs',
+            {
+                title: 'Signin to your account', 
+                error: {},
+                value: {},
+                flashMassage: Flash.getMessage(req)
+            }
+        )
         }
         let match = await bcrypt.compare(password, user.password)
         if (!match) {
-            return res.json({ message: 'Unable to login with provided credentials!' })
+            req.flash('fail', 'Please provide valid credentials')
+            return res.render('pages/auth/login.ejs',
+            {
+                title: 'Signin to your account', 
+                error: {},
+                value: {},
+                flashMassage: Flash.getMessage(req)
+            }
+        )
         }
 
         console.log(user)
@@ -72,6 +111,7 @@ exports.loginPostController = async (req, res, next) => {
                 console.log(err)
                 return next(err)
             }
+            req.flash('success', 'Successfully loged in')
             res.redirect('/dashboard')
         })
     } catch (e) {

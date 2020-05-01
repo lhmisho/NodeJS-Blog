@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const { check, validationResult } = require('express-validator')
 const Flash = require('../utilitiy/Flash')
+const User = require('../models/User')
 
 router.get('/validator', (req, res, next) => {
     // console.log(req.flash('fail'))
@@ -17,11 +18,25 @@ router.post('/validator', [
         .withMessage("Username must not be empty")
         .isLength({ max: 15 })
         .withMessage(`User name cannot be greater than 15 character`)
-        .trim(),
+        .trim()
+        .custom(async value => {
+            console.log(value)
+            let user = await User.findOne({ username: value })
+            console.log()
+            if (user) {
+                return Promise.reject('Username already exists')
+            }
+        }),
     check('email')
         .isEmail()
         .withMessage('Please provide a valid email')
-        .normalizeEmail(),
+        .normalizeEmail()
+        .custom(async value => {
+            let userEmail = await User.findOne({ email: value })
+            if (userEmail) {
+                return Promise.reject('Email already in use')
+            }
+        }),
     check('password')
         .custom(value => {
             if(value.length < 5 ){
