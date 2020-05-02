@@ -21,13 +21,17 @@ var store = new MongoDBStore({
     expires: 1000 * 60 * 60 * 24 * 7 // one week
   });
 
-const config = require('./config/config')
-if(app.get('env').toLowerCase() === 'development'){
-    console.log(config.dev.name)
-}
-if(app.get('env').toLowerCase() === 'production'){
-    console.log(config.prod.name)
-}
+// const config = require('./config/config')
+// if(app.get('env').toLowerCase() === 'development'){
+//     console.log(config.dev.name)
+// }
+// if(app.get('env').toLowerCase() === 'production'){
+//     console.log(config.prod.name)
+// }
+
+const config = require('config');
+console.log(config.get('name'))
+
 
 // const playgroundRouts = require('./playground/validator')
 const authRoutes = require('./routes/authRoutes')
