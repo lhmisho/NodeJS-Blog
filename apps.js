@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const session = require('express-session')
@@ -68,6 +69,21 @@ app.get('/', (req, res) => {
         massage: 'Welcome to new blog'
     })
 })
+
+/**
+ *  @conncet database with mlab
+ */
+
+// mongoose.connect('mongodb://process.env.DB_USER:process.env.DB_PASS@ds119476.mlab.com:19476/hidonshabat', 
+//     {useNewUrlParser: true },function(err)=>{
+//     {
+//         if(err) {
+//             console.log('Some problem with the connection ' +err);
+//         } else {
+//             console.log('The Mongoose connection is ready');
+//         }
+//     })
+
 
 const PORT = process.env.PORT || 8090
 mongoose.connect(DB_URI, {useNewUrlParser: true, useUnifiedTopology: true})
