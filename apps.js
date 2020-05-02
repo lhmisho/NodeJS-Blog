@@ -9,6 +9,10 @@ const setLocalMiddleWare = require('./middleware/setLocals')
 
 
 const app = express()
+
+// console.log(process.env.NODE_ENV) 
+console.log(app.get('env'))
+
 const DB_URI = 'mongodb://localhost:27017/blog';
 var store = new MongoDBStore({
     uri: DB_URI,
@@ -27,9 +31,15 @@ const mongoose = require('mongoose');
 app.set('view engine', 'ejs')
 app.set('views', 'views')
 
+
+// set morgan on Dev environment
+if(app.get('env').toLowerCase() === 'development'){
+    app.use(morgan('dev'))
+}
+
 // middleware array
 const middleware = [
-    morgan('dev'),
+    // morgan('dev'),
     express.static('public'),
     express.urlencoded({extended: true}),
     express.json(),
