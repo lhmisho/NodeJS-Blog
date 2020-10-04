@@ -26,6 +26,21 @@ app.set('views', 'views')
 setMiddleware(app)
 // using setRouts
 setRoutes(app)
+app.use((req, res, next) => {
+    let error = new Error('404 page not found!!!')
+    error.status = 404
+    next(error)
+})
+app.use((error, req, res, next) => {
+    if(error.status === 404){
+        return res.render('pages/error/404', {
+            title: '404 page not found',
+            error: {},
+            value: {},
+            flashMassage: {}
+        })
+    }
+})
 
 /**
  *  @conncet database with mlab
