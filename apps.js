@@ -40,6 +40,13 @@ app.use((error, req, res, next) => {
             flashMassage: {}
         })
     }
+    console.log(error)
+    res.render('pages/error/500',{
+        title: 'Internal server error',
+        error: {},
+        value: {},
+        flashMassage: {}
+    })
 })
 
 /**
