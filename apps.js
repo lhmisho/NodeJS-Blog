@@ -41,6 +41,7 @@ app.use((error, req, res, next) => {
         })
     }
     console.log(error)
+    console.log(chalk.red.inverse(error.message))
     res.render('pages/error/500',{
         title: 'Internal server error',
         error: {},

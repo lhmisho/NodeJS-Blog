@@ -21,7 +21,7 @@
             </ul>
             <div class="tab-content" id="myTabContent">
 
-                <form action="/playground/validator" method="POST">
+                <form action="/playground/validator" method="POST" enctype="multipart/form-data">
                     <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                         <h3 class="register-heading">Register a new account/h3>
                         <div class="row register-form">
@@ -29,17 +29,8 @@
                                 <div class="form-group">
                                     <input type="text" class="form-control" name="username" placeholder="Username must be unique <%= error.username ? 'is-invalid' : '' %> " />
                                 </div>
-                                <div class="invalid-feedback">
-                                    <%= error.username && error.uername %> 
-                                </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control" name="email" placeholder="Enter a valid email" />
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" name="password" placeholder="Password *"/>
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password *" value="" />
+                                    <input type="file" class="form-control" name="file" />
                                 </div>
                                 <input type="submit" class="btnRegister" value="Register" />
                             </div>
